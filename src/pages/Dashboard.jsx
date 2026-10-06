@@ -25,7 +25,9 @@ import { ROLES } from "../constants";
 function AdminDashboard() {
   const { data, loading, error, reload } = useFetch(() => dashboardApi.admin());
 
-  const depts = data?.departmentWise || [];
+  const dashboard = data?.data || data || {};
+
+  const depts = dashboard.departmentWise || [];
 
   const max = Math.max(1, ...depts.map((d) => d.employeeCount ?? 0));
 
@@ -44,23 +46,23 @@ function AdminDashboard() {
       >
         {/* Statistics */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Stat label="Total employees" value={data?.totalEmployees ?? 0} />
+          <Stat label="Total employees" value={dashboard.totalEmployees ?? 0} />
 
           <Stat
             label="Active"
-            value={data?.activeEmployees ?? 0}
+            value={dashboard.activeEmployees ?? 0}
             tone="text-emerald-600"
           />
 
           <Stat
             label="Inactive"
-            value={data?.inactiveEmployees ?? 0}
+            value={dashboard.inactiveEmployees ?? 0}
             tone="text-slate-500"
           />
 
           <Stat
             label="Pending leave requests"
-            value={data?.pendingLeaveRequests ?? 0}
+            value={dashboard.pendingLeaveRequests ?? 0}
             tone="text-amber-600"
           />
         </div>
