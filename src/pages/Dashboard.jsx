@@ -25,9 +25,9 @@ import { ROLES } from "../constants";
 function AdminDashboard() {
   const { data, loading, error, reload } = useFetch(() => dashboardApi.admin());
 
-  const depts = data?.departmentCounts || data?.departments || [];
+  const depts = data?.departmentWise || [];
 
-  const max = Math.max(1, ...depts.map((d) => d.count ?? d.employeeCount ?? 0));
+  const max = Math.max(1, ...depts.map((d) => d.employeeCount ?? 0));
 
   return (
     <>
@@ -42,28 +42,30 @@ function AdminDashboard() {
         noun="dashboard"
         onRetry={reload}
       >
+        {/* Statistics */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Stat label="Total employees" value={data?.totalEmployees} />
+          <Stat label="Total employees" value={data?.totalEmployees ?? 0} />
 
           <Stat
             label="Active"
-            value={data?.activeEmployees}
+            value={data?.activeEmployees ?? 0}
             tone="text-emerald-600"
           />
 
           <Stat
             label="Inactive"
-            value={data?.inactiveEmployees}
+            value={data?.inactiveEmployees ?? 0}
             tone="text-slate-500"
           />
 
           <Stat
             label="Pending leave requests"
-            value={data?.pendingLeaves}
+            value={data?.pendingLeaveRequests ?? 0}
             tone="text-amber-600"
           />
         </div>
 
+        {/* Employees by Department */}
         <div className="card mt-6">
           <h2 className="mb-4 font-semibold">Employees by department</h2>
 
@@ -72,14 +74,16 @@ function AdminDashboard() {
           ) : (
             <ul className="space-y-3">
               {depts.map((d) => {
-                const count = d.count ?? d.employeeCount ?? 0;
+                const count = d.employeeCount ?? 0;
 
                 return (
                   <li
-                    key={d.id || d.name}
+                    key={d.departmentId}
                     className="flex items-center gap-3 text-sm"
                   >
-                    <span className="w-32 shrink-0 truncate">{d.name}</span>
+                    <span className="w-32 shrink-0 truncate">
+                      {d.departmentName}
+                    </span>
 
                     <div className="h-3 flex-1 rounded-full bg-slate-100">
                       <div
